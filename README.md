@@ -1,284 +1,99 @@
-# 🐦 Çivit — Twitter Clone (MVP)
+# 🐦 Çivit — Yazılımcılar ve Tasarımcılar için Yeni Nesil Mikroblog
 
-> Ruby on Rails 7 + PostgreSQL + Hotwire (Turbo/Stimulus) + Tailwind CSS ile geliştirilmiş kapsamlı bir Twitter klonu.
-
-## 📸 Özellikler
-
-### ✅ Authentication (Devise)
-- Kayıt olma (username, display_name, bio, email, password)
-- Giriş / Çıkış
-- Profil düzenleme
-- Session yönetimi
-
-### ✅ Tweet Sistemi
-- Tweet oluşturma (max 280 karakter)
-- Tweet silme
-- Tweet düzenleme
-- Karakter sayacı (gerçek zamanlı SVG progress)
-- Ters kronolojik sıralama
-
-### ✅ Beğeni (Like) Sistemi
-- Tweet beğenme / beğeniyi geri alma
-- Beğeni sayacı (counter cache)
-- Turbo Stream ile anlık güncelleme (sayfa yenilenmeden)
-- Kalp animasyonu
-
-### ✅ Yorum (Comment) Sistemi
-- Tweetlere yorum yapma
-- Yorum silme
-- Yorum sayacı
-- Turbo Stream ile anlık güncelleme
-
-### ✅ Takip (Follow) Sistemi
-- Self-referential association (User → Relationship → User)
-- Takip et / Takibi bırak
-- Takipçi & Takip listesi
-- Counter cache (followers_count, following_count)
-- Turbo Stream ile anlık güncelleme
-
-### ✅ Modern UX (Hotwire)
-- **Turbo Streams**: Tweet atma, beğenme, yorum yapma sayfa yenilenmeden
-- **Turbo Frames**: Tweet detayları ve yorumlar
-- **Stimulus**: Karakter sayacı, flash mesaj animasyonu
-- **Gerçek zamanlı**: Broadcasting desteği
-
-### ✅ Tasarım
-- **Tailwind CSS 3**: Utility-first CSS
-- **Karanlık Mod**: Tam karanlık tema
-- **Mobil Uyumlu**: Responsive sidebar layout
-- **Animasyonlar**: fadeIn, likePop, slideIn/Out
-- **Twitter-benzeri UI**: Avatar, header, action buttons
+Çivit, Ruby on Rails 8 ve Tailwind CSS 4 mimarisi kullanılarak geliştirilmiş, reaktif arayüz bileşenlerine sahip, yüksek performanslı ve modern bir Twitter/X klonudur. Üniversite Web Tasarımı ve Programlama dersi final projesi kapsamında, modern yazılım mühendisliği standartlarına uygun olarak tasarlanmış ve canlandırılmıştır.
 
 ---
 
-## 🛠️ Teknik Mimari
+## 🚀 Öne Çıkan Özellikler & MVP Kapsamı
 
-| Katman | Teknoloji |
-|--------|-----------|
-| Backend | Ruby on Rails 7.1 |
-| Database | PostgreSQL |
-| Auth | Devise |
-| Frontend | Hotwire (Turbo + Stimulus) |
-| CSS | Tailwind CSS 3 |
-| Assets | Propshaft + importmap-rails |
-
-### Veritabanı Şeması
-
-```
-User (Devise)
-├── username (unique)
-├── display_name
-├── bio
-├── followers_count
-├── following_count
-└── tweets_count
-
-Tweet
-├── content (max 280)
-├── user_id (FK)
-├── likes_count
-└── comments_count
-
-Comment
-├── content
-├── user_id (FK)
-└── tweet_id (FK)
-
-Like (Join Table)
-├── user_id (FK)
-└── tweet_id (FK, unique with user_id)
-
-Relationship (Self-referential)
-├── follower_id (FK → User)
-└── followed_id (FK → User, unique with follower_id)
-```
-
-### Model İlişkileri
-
-```ruby
-User
-  has_many :tweets
-  has_many :comments
-  has_many :likes
-  has_many :liked_tweets, through: :likes
-  has_many :active_relationships  (follower)
-  has_many :passive_relationships (followed)
-  has_many :following, through: :active_relationships
-  has_many :followers, through: :passive_relationships
-
-Tweet
-  belongs_to :user (counter_cache)
-  has_many :comments
-  has_many :likes
-
-Comment
-  belongs_to :user
-  belongs_to :tweet (counter_cache)
-
-Like
-  belongs_to :user
-  belongs_to :tweet (counter_cache)
-
-Relationship
-  belongs_to :follower (User, counter_cache: :following_count)
-  belongs_to :followed (User, counter_cache: :followers_count)
-```
+*   **⚡ Sıfır Gecikmeli Reaktif Arayüz (Hotwire):** Sayfa yenilenmeden dinamik olarak çalışan tweet atma, silme, beğenme ve yorum yapma akışları (**Turbo Streams & Stimulus JS**).
+*   **🔒 Esnek ve Güvenli Oturum Yönetimi:** `Devise` entegrasyonu sayesinde kullanıcılar hem **e-posta** hem de benzersiz **`@username`** (kullanıcı adı) ile güvenle giriş yapabilir.
+*   **🛠️ Solid Stack Altyapısı (No-Redis):** Arka plan kuyruk yönetimi (`Solid Queue`) ve önbellekleme (`Solid Cache`) doğrudan PostgreSQL veritabanı üzerinden yürütülerek harici servis bağımlılıkları sıfırlanmıştır.
+*   **🌓 Dinamik Karanlık Tema (Dark Mode):** Kullanıcının sistem ayarlarına göre otomatik uyum sağlayan veya manuel olarak değiştirilebilen modern glassmorphism esintili karanlık tema desteği.
+*   **♿ WCAG 2.1 AA Erişilebilirlik:** Lighthouse testlerinde **100/100 tam puan** alan, ekran okuyucu ve klavye navigasyonu uyumlu erişilebilir arayüz tasarımı.
 
 ---
 
-## 🚀 Kurulum
+## 🎨 Arayüz Tasarımları ve Ekran Görüntüleri
 
-### Gereksinimler
+### 1. Karşılama ve Giriş Ekranı (Landing Page)
+![Çivit Landing Page](./docs/images/landing_mockup.png)
 
-- **Ruby** 3.3.0+
-- **Rails** 7.1+
-- **PostgreSQL** 14+
-- **Node.js** 18+ (Tailwind CSS için)
+### 2. Anasayfa Akış Paneli (Dashboard - Dolu Durum)
+![Çivit Dashboard Dolu Durum](./docs/images/dashboard_dolu_state.png)
 
-### 1. Ruby Kurulumu (Windows)
+### 3. Mobil Responsive Görünüm (Mobile View)
+![Çivit Mobil Görünüm](./docs/images/mobile_view.png)
 
-```powershell
-# RubyInstaller ile kur (https://rubyinstaller.org/)
-# Ruby+Devkit 3.3.x (x64) indir ve kur
+---
 
-# Kontrol:
-ruby --version
-gem --version
-```
+## 🛠️ Teknik Teknoloji Yığını (Tech Stack)
 
-### 2. PostgreSQL Kurulumu
+*   **Çekirdek Çatı:** Ruby on Rails 8.0 (Ruby 3.3.0 + YJIT Etkin)
+*   **Veritabanı:** PostgreSQL 16
+*   **CSS / Stil:** Tailwind CSS v4.0
+*   **Frontend Reaktivitesi:** Hotwire (Turbo Drive, Turbo Streams, Stimulus JS)
+*   **Kimlik Doğrulama:** Devise (Çoklu alan girişi ve JTI Kara Liste destekli JWT)
+*   **İş Kuyruğu & Önbellek:** Solid Queue, Solid Cache (PostgreSQL Destekli)
+*   **Yerel Çalıştırma Sunucusu:** Puma
+*   **Dağıtım (Deployment):** Kamal 2 (VPS & Docker Konteynerleri)
 
-```powershell
-# https://www.postgresql.org/download/windows/ adresinden indir
-# Veya winget ile:
-winget install PostgreSQL.PostgreSQL
+---
 
-# Kontrol:
-psql --version
-```
+## 📥 Kurulum ve Yerel Çalıştırma Adımları
 
-### 3. Proje Kurulumu
+Yerel geliştirme ortamınızda Çivit platformunu ayağa kaldırmak için aşağıdaki adımları takip ediniz:
 
-```powershell
-# Proje dizinine git
-cd "web final ödevi"
+### 1. Ön Gereksinimler
+Sisteminizde **Ruby >= 3.3.0** ve **PostgreSQL >= 16** yüklü ve çalışır durumda olmalıdır.
 
-# Gem'leri kur
+### 2. Kurulum Komutları
+
+```bash
+# 1. Projeyi kopyalayın
+git clone https://github.com/Sehernur49/web-final-devi.git
+cd web-final-devi
+
+# 2. Ruby paketlerini yükleyin
 bundle install
 
-# Tailwind CSS'i kur
-rails tailwindcss:install
+# 3. Veritabanını oluşturun ve başlangıç verilerini (seeds) yükleyin
+bin/rails db:prepare
 
-# Veritabanını oluştur
-rails db:create
-rails db:migrate
-rails db:seed
-
-# Sunucuyu başlat
-rails server
-# veya Tailwind ile birlikte:
+# 4. Sunucuyu ve Tailwind derleyicisini eş zamanlı başlatın
 bin/dev
 ```
 
-### 4. Tarayıcıda Aç
-
-```
-http://localhost:3000
-```
-
-### Demo Giriş Bilgileri
-
-| E-posta | Şifre |
-|---------|-------|
-| admin@example.com | password123 |
-| ayse@example.com | password123 |
-| mehmet@example.com | password123 |
+Tarayıcınızdan **`http://localhost:3000`** adresine giderek platformu yerelde test edebilirsiniz.
 
 ---
 
-## 📁 Proje Yapısı
+## 🧪 Test Stratejisi & Koşturulması
 
-```
-├── app/
-│   ├── controllers/
-│   │   ├── application_controller.rb
-│   │   ├── tweets_controller.rb      # CRUD + Turbo Stream
-│   │   ├── comments_controller.rb     # Create/Destroy + Turbo
-│   │   ├── likes_controller.rb        # Like toggle + Turbo
-│   │   ├── users_controller.rb        # Profile + Follow/Unfollow
-│   │   └── users/                     # Devise custom controllers
-│   ├── models/
-│   │   ├── user.rb                    # Devise + Follow + Feed
-│   │   ├── tweet.rb                   # Broadcasts + Scopes
-│   │   ├── comment.rb                 # Counter cache
-│   │   ├── like.rb                    # Uniqueness
-│   │   └── relationship.rb           # Self-referential
-│   ├── views/
-│   │   ├── layouts/application.html.erb
-│   │   ├── tweets/                    # Index, Show, Edit, Partials
-│   │   ├── comments/                  # Partials
-│   │   ├── likes/                     # Button partial
-│   │   ├── users/                     # Show, Index, Follow list
-│   │   ├── devise/                    # Login, Register, Edit
-│   │   └── shared/                    # Sidebar, Right sidebar
-│   ├── javascript/controllers/        # Stimulus controllers
-│   └── helpers/
-├── config/
-│   ├── routes.rb                      # RESTful routes
-│   ├── database.yml                   # PostgreSQL config
-│   ├── tailwind.config.js            # Tailwind + Dark mode
-│   └── initializers/devise.rb        # Devise config
-├── db/
-│   ├── migrate/                       # 5 migration files
-│   ├── schema.rb
-│   └── seeds.rb                       # Demo data
-└── Gemfile
+Projede piramit test modeli uygulanmıştır:
+*   **Birim (Unit) Testleri:** Modeller, ilişkiler ve veritabanı doğrulama kuralları.
+*   **Entegrasyon Testleri:** Controller akışları ve session yönetimleri.
+
+Testleri koşturmak için:
+```bash
+# Tüm RSpec test paketini çalıştırın
+bundle exec rspec
 ```
 
 ---
 
-## 🎨 Turbo Stream Kullanımı
+## 📊 Yazılım Mimarisi (C4 Model)
 
-### Tweet Oluşturma (Sayfa Yenilenmeden)
-```ruby
-# tweets_controller.rb - create action
-format.turbo_stream do
-  render turbo_stream: [
-    turbo_stream.prepend("tweets", partial: "tweets/tweet"),
-    turbo_stream.replace("tweet_form", partial: "tweets/form"),
-    turbo_stream.update("tweet_count", count)
-  ]
-end
-```
+Çivit, monolitik bir MVC mimarisine sahiptir. İstemci ile sunucu arasındaki tüm reaktif haberleşmeler **Action Cable (WebSockets)** ve **Turbo Streams** katmanları üzerinden yönetilir. 
 
-### Beğeni Toggle (Sayfa Yenilenmeden)
-```ruby
-# likes_controller.rb - create/destroy
-format.turbo_stream do
-  render turbo_stream: turbo_stream.replace(
-    "like_button_#{@tweet.id}",
-    partial: "likes/button"
-  )
-end
-```
-
-### Takip (Sayfa Yenilenmeden)
-```ruby
-# users_controller.rb - follow/unfollow
-format.turbo_stream do
-  render turbo_stream: [
-    turbo_stream.replace("follow_button_#{@user.id}", ...),
-    turbo_stream.replace("followers_count_#{@user.id}", ...)
-  ]
-end
-```
+Sistem mimarisinin detaylarına, veritabanı indeks kararlarına ve ilişki diyagramlarına (ERD) **`docs/`** dizinindeki `ARCHITECTURE.md` belgesinden erişebilirsiniz.
 
 ---
 
-## 📝 Lisans
+## 📜 Lisans & Proje Künyesi
 
-Bu proje eğitim amaçlı geliştirilmiştir.
+Bu proje, **T.C. Üniversite Web Tasarımı ve Programlama Dersi** final teslimi kapsamında geliştirilmiş akademik bir çalışmadır.
 
----
-
-*Rails 7 + Hotwire + Tailwind CSS ile ❤️ ile geliştirildi*
+*   **Geliştirici / Öğrenci:** Sehernur49
+*   **Akademik Yıl:** 2026
+*   **Lisans:** MIT License
