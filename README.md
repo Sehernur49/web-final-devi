@@ -95,6 +95,6 @@ Sistem mimarisinin detaylarına, veritabanı indeks kararlarına ve ilişki diya
 Bu proje, **T.C. Üniversite Web Tasarımı ve Programlama Dersi** final teslimi kapsamında geliştirilmiş akademik bir çalışmadır.
 
 *   **Geliştirici / Öğrenci:** Sehernur Arifinan
-*   **Öğrenci Numarası:** [Okul Numarası Buraya]
+*   **Öğrenci Numarası:** 24080410030
 *   **Akademik Yıl:** 2026
 *   **Lisans:** MIT License
