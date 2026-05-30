@@ -1,5 +1,11 @@
 # 🐦 Çivit — Yazılımcılar ve Tasarımcılar için Yeni Nesil Mikroblog
 
+> ### 🎓 Akademik Proje Künyesi
+> * **Geliştirici / Öğrenci:** Sehernur Arifinan
+> * **Öğrenci Numarası:** 24080410030
+> * **Ders:** Web Tasarımı ve Programlama Final Ödevi
+> * **Akademik Yıl:** 2026
+
 Çivit, Ruby on Rails 8 ve Tailwind CSS 4 mimarisi kullanılarak geliştirilmiş, reaktif arayüz bileşenlerine sahip, yüksek performanslı ve modern bir Twitter/X klonudur. Üniversite Web Tasarımı ve Programlama dersi final projesi kapsamında, modern yazılım mühendisliği standartlarına uygun olarak tasarlanmış ve canlandırılmıştır.
 
 ---
@@ -90,11 +96,6 @@ Sistem mimarisinin detaylarına, veritabanı indeks kararlarına ve ilişki diya
 
 ---
 
-## 📜 Lisans & Proje Künyesi
+## 📜 Lisans
 
-Bu proje, **T.C. Üniversite Web Tasarımı ve Programlama Dersi** final teslimi kapsamında geliştirilmiş akademik bir çalışmadır.
-
-*   **Geliştirici / Öğrenci:** Sehernur Arifinan
-*   **Öğrenci Numarası:** 24080410030
-*   **Akademik Yıl:** 2026
-*   **Lisans:** MIT License
+Bu proje, MIT lisansı kapsamında açık kaynaklı bir yazılım projesi olarak lisanslanmıştır.
