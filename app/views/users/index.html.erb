@@ -1,0 +1,39 @@
+<!-- Users Index / Explore Page -->
+<div class="sticky top-0 z-10 bg-white dark:bg-black/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800/50">
+  <h1 class="text-xl font-extrabold text-gray-900 dark:text-white px-4 py-3">Keşfet</h1>
+</div>
+
+<div id="users-list">
+  <% @users.each do |user| %>
+    <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-200 dark:border-gray-800/50 hover:bg-white/[0.02] transition-colors duration-200">
+      <!-- Avatar -->
+      <a href="<%= user_path(user) %>">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-gray-900 dark:text-white font-bold text-sm hover:opacity-80 transition-opacity flex-shrink-0">
+          <%= user.username[0..1].upcase %>
+        </div>
+      </a>
+
+      <!-- User Info -->
+      <div class="flex-1 min-w-0">
+        <a href="<%= user_path(user) %>" class="hover:underline">
+          <p class="font-bold text-gray-900 dark:text-white text-[15px] truncate"><%= user.name_display %></p>
+        </a>
+        <p class="text-gray-500 dark:text-gray-500 text-sm truncate">@<%= user.username %></p>
+        <% if user.bio.present? %>
+          <p class="text-gray-700 dark:text-gray-300 text-sm mt-1 line-clamp-2"><%= user.bio %></p>
+        <% end %>
+      </div>
+
+      <!-- Follow Button -->
+      <div id="follow_button_<%= user.id %>">
+        <%= render "users/follow_button", user: user %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @users.empty? %>
+    <div class="py-20 text-center">
+      <h3 class="text-lg font-bold text-gray-600 dark:text-gray-400">Kullanıcı bulunamadı</h3>
+    </div>
+  <% end %>
+</div>

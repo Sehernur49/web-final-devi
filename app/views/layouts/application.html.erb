@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Twitter Clone - Modern sosyal medya platformu">
+  <title><%= page_title %></title>
+
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <!-- Tailwind CDN (Bulletproof Solution for Path Errors) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            twitter: {
+              blue: '#1d9bf0',
+              black: '#000000',
+              dark: '#15202b',
+              gray: {
+                border: '#2f3336',
+                text: '#71767b',
+              }
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'slide-in': 'slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            'slide-out': 'slideOut 0.3s ease-in forwards',
+            'like-pop': 'likePop 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style type="text/css">
+    /* Essential Dark Mode & Animations (Inlined to prevent 404s) */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+    
+    .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+    .animate-slide-in { animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 20px; }
+    
+    /* Dark Mode Fallbacks */
+    html.dark body { background-color: #000000 !important; color: #e7e9ea !important; }
+    html.dark .bg-white { background-color: #000000 !important; }
+    html.dark .text-gray-900 { color: #e7e9ea !important; }
+    html.dark .border-gray-200, html.dark .border-gray-100 { border-color: #2f3336 !important; }
+  </style>
+
+  <%= javascript_importmap_tags %>
+</head>
+<body class="bg-white text-gray-900 dark:bg-black dark:text-gray-100 font-['Inter'] min-h-screen antialiased transition-colors duration-200">
+  <!-- Flash Messages -->
+  <% if notice %>
+    <div id="flash-notice" class="fixed top-4 right-4 z-50 bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 px-6 py-3 rounded-xl backdrop-blur-lg shadow-2xl animate-slide-in" data-controller="flash" data-flash-target="message">
+      <div class="flex items-center gap-3">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-sm font-medium"><%= notice %></span>
+      </div>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div id="flash-alert" class="fixed top-4 right-4 z-50 bg-red-500/10 dark:bg-red-500/20 border border-red-500/20 dark:border-red-500/30 text-red-700 dark:text-red-300 px-6 py-3 rounded-xl backdrop-blur-lg shadow-2xl animate-slide-in" data-controller="flash" data-flash-target="message">
+      <div class="flex items-center gap-3">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-sm font-medium"><%= alert %></span>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="flex min-h-screen max-w-7xl mx-auto">
+    <% if user_signed_in? %>
+      <!-- Sidebar Navigation -->
+      <%= render "shared/sidebar" %>
+
+      <!-- Main Content -->
+      <main class="flex-1 border-x border-gray-200 dark:border-[#2f3336] min-h-screen max-w-[600px]">
+        <%= yield %>
+      </main>
+
+      <!-- Right Sidebar -->
+      <%= render "shared/right_sidebar" %>
+    <% else %>
+      <!-- Full-width for auth pages -->
+      <main class="flex-1">
+        <%= yield %>
+      </main>
+    <% end %>
+    <% if user_signed_in? %>
+      <!-- Mobile Nav -->
+      <%= render "shared/mobile_nav" %>
+    <% end %>
+  </div>
+</body>
+</html>

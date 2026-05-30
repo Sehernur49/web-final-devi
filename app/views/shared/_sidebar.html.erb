@@ -1,0 +1,108 @@
+<!-- Left Sidebar Navigation -->
+<nav class="w-[275px] hidden lg:flex flex-col justify-between py-4 px-6 sticky top-0 h-screen">
+  <div>
+    <!-- Logo & Theme Toggle -->
+    <div class="flex items-center justify-between mb-8 px-3">
+      <a href="<%= root_path %>" class="group">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center group-hover:shadow-lg group-hover:shadow-sky-500/25 transition-all duration-300">
+          <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
+          </svg>
+        </div>
+      </a>
+
+      <button 
+        id="theme-toggle-btn"
+        type="button"
+        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-all duration-200"
+        title="Temayı Değiştir"
+      >
+        <div id="theme-toggle-icon">
+          <!-- Icon will be set by script -->
+        </div>
+      </button>
+
+      <script>
+        (function() {
+          const btn = document.getElementById('theme-toggle-btn');
+          const iconContainer = document.getElementById('theme-toggle-icon');
+          
+          const sunIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.95 16.95l.707.707M7.757 7.757l.707.707M12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>`;
+          const moonIcon = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>`;
+
+          function updateIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            iconContainer.innerHTML = isDark ? sunIcon : moonIcon;
+          }
+
+          btn.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateIcon();
+          });
+
+          updateIcon();
+          // Watch for changes (e.g. from other tabs or initial load)
+          window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') updateIcon();
+          });
+        })();
+      </script>
+    </div>
+
+    <!-- Nav Links -->
+    <ul class="space-y-1">
+      <li>
+        <a href="<%= root_path %>" class="flex items-center gap-4 px-4 py-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 group">
+          <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span class="text-xl font-medium text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">Ana Sayfa</span>
+        </a>
+      </li>
+      <li>
+        <a href="<%= users_path %>" class="flex items-center gap-4 px-4 py-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 group">
+          <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span class="text-xl font-medium text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">Keşfet</span>
+        </a>
+      </li>
+      <li>
+        <a href="<%= user_path(current_user) %>" class="flex items-center gap-4 px-4 py-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 group">
+          <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          <span class="text-xl font-medium text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">Profil</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Tweet Button -->
+    <div class="mt-6">
+      <a href="#tweet-form-area" class="block w-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold py-3.5 px-8 rounded-full text-center hover:from-sky-400 hover:to-blue-500 transition-all duration-300 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:scale-[1.02] active:scale-[0.98]">
+        Tweet at
+      </a>
+    </div>
+  </div>
+
+  <!-- User Profile Card -->
+  <div class="mt-4">
+    <div class="flex items-center gap-3 p-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 cursor-pointer group">
+      <!-- Avatar -->
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+        <%= current_user.username[0..1].upcase %>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-gray-900 dark:text-white truncate"><%= current_user.name_display %></p>
+        <p class="text-sm text-gray-500 truncate">@<%= current_user.username %></p>
+      </div>
+      <!-- Logout -->
+      <%= link_to destroy_user_session_path, class: "text-gray-500 hover:text-red-400 transition-colors p-1", title: "Oturumu Kapat" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+      <% end %>
+    </div>
+  </div>
+</nav>

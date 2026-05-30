@@ -1,0 +1,13 @@
+<!-- Follow Button Partial -->
+<div id="follow_button_<%= user.id %>">
+  <% if current_user.following?(user) %>
+    <%= button_to unfollow_user_path(user), method: :delete, class: "group border border-gray-600 text-gray-900 dark:text-white font-bold py-1.5 px-5 rounded-full hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-200 text-sm" do %>
+      <span class="group-hover:hidden">Takip Ediliyor</span>
+      <span class="hidden group-hover:inline text-red-400">Takibi Bırak</span>
+    <% end %>
+  <% else %>
+    <%= button_to follow_user_path(user), method: :post, class: "bg-white text-black font-bold py-1.5 px-5 rounded-full hover:bg-gray-200 transition-all duration-200 text-sm hover:scale-[1.02] active:scale-[0.98]" do %>
+      Takip Et
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,304 @@
+openapi: 3.1.0
+info:
+  title: Çivit API Specification
+  description: Ruby on Rails 8 tabanlı, yüksek performanslı ve hafif mikroblog platformu Çivit için tasarlanmış API belgesi.
+  version: 1.0.0
+servers:
+  - url: https://api.civit.dev/v1
+    description: Canlı Üretim Ortamı (Production)
+  - url: http://localhost:3000/v1
+    description: Yerel Geliştirme Ortamı (Development)
+paths:
+  /users/sign_up:
+    post:
+      summary: Yeni Kullanıcı Kaydı
+      description: Platforma e-posta, benzersiz kullanıcı adı ve güvenli şifre ile yeni üye kaydı yapar.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - username
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: yigit@yigit.dev
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                  example: yigitdev
+                password:
+                  type: string
+                  format: password
+                  minLength: 6
+                  example: GuvenliSifre123
+      responses:
+        '201':
+          description: Kayıt başarılı, hesap oluşturuldu.
+        '422':
+          description: Geçersiz parametreler (E-posta veya kullanıcı adı kullanımda).
+
+  /users/sign_in:
+    post:
+      summary: Kullanıcı Oturumu Açma
+      description: E-posta veya kullanıcı adı (login) ve şifre doğrulaması yaparak oturum çerezi üretir.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - login
+                - password
+              properties:
+                login:
+                  type: string
+                  description: Kullanıcının e-posta adresi veya benzersiz kullanıcı adı.
+                  example: yigitdev
+                password:
+                  type: string
+                  format: password
+                  example: GuvenliSifre123
+      responses:
+        '200':
+          description: Giriş başarılı, oturum çerezi tarayıcıya yazıldı.
+        '401':
+          description: Hatalı kullanıcı adı/e-posta veya şifre.
+
+  /users/sign_out:
+    delete:
+      summary: Oturumu Kapatma
+      description: Mevcut aktif oturumu sonlandırarak çerez geçerliliğini iptal eder.
+      responses:
+        '204':
+          description: Oturum başarıyla sonlandırıldı (No Content).
+        '401':
+          description: Aktif bir oturum bulunmamaktadır.
+
+  /tweets:
+    get:
+      summary: Akış (Feed) Tweetlerini Listeleme
+      description: Kronolojik sırayla en son gönderilen veya takip edilen kullanıcıların tweet akışını getirir.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Sayfalama için sayfa numarası.
+      responses:
+        '200':
+          description: Tweet listesi başarıyla getirildi.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tweet'
+    post:
+      summary: Yeni Tweet Gönderme
+      description: Oturum açmış aktif kullanıcının adıyla maksimum 280 karakterden oluşan yeni bir tweet yayınlar.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - body
+              properties:
+                body:
+                  type: string
+                  maxLength: 280
+                  example: Hotwire ve Rails 8 ile sıfır gecikmeli web geliştirmek harika bir his! 🚀
+      responses:
+        '201':
+          description: Tweet başarıyla oluşturuldu ve yayınlandı.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tweet'
+        '401':
+          description: Yetkisiz erişim, oturum açılmalıdır.
+        '422':
+          description: Tweet içeriği boş veya 280 karakterden uzun.
+
+  /tweets/{id}:
+    delete:
+      summary: Tweet Silme
+      description: ID değeri verilen tweeti sistemden kalıcı olarak siler (Yalnızca tweet sahibi silebilir).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Silinecek tweetin benzersiz ID'si.
+      responses:
+        '204':
+          description: Tweet başarıyla silindi.
+        '401':
+          description: Yetkisiz erişim, oturum açılmalıdır.
+        '403':
+          description: Bu tweeti silme yetkiniz bulunmamaktadır.
+        '404':
+          description: Tweet bulunamadı.
+
+  /tweets/{id}/likes:
+    post:
+      summary: Tweet Beğenme
+      description: Belirtilen tweete beğeni ekler (Bir kullanıcı bir tweeti yalnızca bir kez beğenebilir).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Beğenilecek tweetin benzersiz ID'si.
+      responses:
+        '201':
+          description: Beğeni başarıyla eklendi.
+        '401':
+          description: Yetkisiz erişim, oturum açılmalıdır.
+        '422':
+          description: Tweet zaten beğenilmiş.
+    delete:
+      summary: Beğeniyi Geri Alma
+      description: Belirtilen tweet üzerindeki kullanıcı beğenisini kaldırır.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Beğenisi geri alınacak tweetin benzersiz ID'si.
+      responses:
+        '204':
+          description: Beğeni başarıyla kaldırıldı.
+        '401':
+          description: Yetkisiz erişim, oturum açılmalıdır.
+        '404':
+          description: Beğeni kaydı bulunamadı.
+
+  /tweets/{id}/comments:
+    post:
+      summary: Tweet'e Yorum Yapma
+      description: Belirtilen tweetin altına yeni bir yorum ekler.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Yorum yapılacak ana tweetin benzersiz ID'si.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - body
+              properties:
+                body:
+                  type: string
+                  example: Bu tasarıma kesinlikle katılıyorum! 🎨
+      responses:
+        '201':
+          description: Yorum başarıyla eklendi.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: Yetkisiz erişim, oturum açılmalıdır.
+        '422':
+          description: Yorum içeriği boş veya geçersiz.
+
+  /users/{id}/relationships:
+    post:
+      summary: Kullanıcıyı Takip Etme
+      description: Belirtilen ID'ye sahip kullanıcıyı takip listesine ekler (Öz-referanslı ilişki).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Takip edilmek istenen kullanıcının benzersiz ID'si.
+      responses:
+        '201':
+          description: Takip ilişkisi başarıyla kuruldu.
+        '401':
+          description: Yetkisiz erişim, oturum açılmalıdır.
+        '422':
+          description: Kendinizi takip edemezsiniz veya zaten takip ediyorsunuz.
+    delete:
+      summary: Takibi Bırakma (Unfollow)
+      description: Belirtilen ID'ye sahip kullanıcıyı takip etmeyi bırakır.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Takipten çıkılmak istenen kullanıcının benzersiz ID'si.
+      responses:
+        '204':
+          description: Takip ilişkisi başarıyla sonlandırıldı.
+        '401':
+          description: Yetkisiz erişim, oturum açılmalıdır.
+        '404':
+          description: Takip ilişkisi bulunamadı.
+
+components:
+  schemas:
+    Tweet:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 125
+        body:
+          type: string
+          example: Çivit platformunda ilk paylaşım!
+        user_id:
+          type: integer
+          example: 42
+        likes_count:
+          type: integer
+          example: 12
+        comments_count:
+          type: integer
+          example: 3
+        created_at:
+          type: string
+          format: date-time
+          example: 2026-05-30T12:00:00Z
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 450
+        body:
+          type: string
+          example: Gerçekten harika bir çalışma!
+        user_id:
+          type: integer
+          example: 87
+        tweet_id:
+          type: integer
+          example: 125
+        created_at:
+          type: string
+          format: date-time
+          example: 2026-05-30T12:05:00Z

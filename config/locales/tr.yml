@@ -1,0 +1,28 @@
+tr:
+  activerecord:
+    models:
+      user: "Kullanıcı"
+      tweet: "Tweet"
+      comment: "Yorum"
+      like: "Beğeni"
+    attributes:
+      user:
+        username: "Kullanıcı Adı"
+        display_name: "Görünen Ad"
+        bio: "Biyografi"
+        email: "E-posta"
+        password: "Şifre"
+        password_confirmation: "Şifre Onayı"
+        current_password: "Mevcut Şifre"
+      tweet:
+        content: "İçerik"
+      comment:
+        content: "Yorum"
+  errors:
+    messages:
+      blank: "boş bırakılamaz"
+      too_short: "çok kısa (en az %{count} karakter)"
+      too_long: "çok uzun (en fazla %{count} karakter)"
+      taken: "zaten alınmış"
+      invalid: "geçersiz"
+      confirmation: "onayıyla uyuşmuyor"

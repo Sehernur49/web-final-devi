@@ -1,0 +1,11 @@
+<!-- Followers Count Partial -->
+<div id="followers_count_<%= user.id %>" class="flex gap-5">
+  <a href="<%= following_user_path(user) %>" class="hover:underline">
+    <span class="font-bold text-gray-900 dark:text-white"><%= user.following_count %></span>
+    <span class="text-gray-500 dark:text-gray-500 text-sm"> Takip</span>
+  </a>
+  <a href="<%= followers_user_path(user) %>" class="hover:underline">
+    <span class="font-bold text-gray-900 dark:text-white"><%= user.followers_count %></span>
+    <span class="text-gray-500 dark:text-gray-500 text-sm"> Takipçi</span>
+  </a>
+</div>

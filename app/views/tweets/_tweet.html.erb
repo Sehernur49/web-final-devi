@@ -1,0 +1,79 @@
+<!-- Tweet Partial -->
+<%= turbo_frame_tag tweet do %>
+  <article id="<%= dom_id(tweet) %>" class="px-4 py-3 border-b border-gray-200 dark:border-[#2f3336] hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors duration-200 cursor-pointer animate-fade-in">
+    <div class="flex gap-3">
+      <!-- Avatar -->
+      <a href="<%= user_path(tweet.user) %>" class="flex-shrink-0">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-gray-900 dark:text-white font-bold text-sm hover:opacity-80 transition-opacity">
+          <%= tweet.user.username[0..1].upcase %>
+        </div>
+      </a>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+        <!-- Header -->
+        <div class="flex items-center gap-1 mb-0.5">
+          <a href="<%= user_path(tweet.user) %>" class="hover:underline">
+            <span class="font-bold text-gray-900 dark:text-white text-[15px]"><%= tweet.user.name_display %></span>
+          </a>
+          <span class="text-gray-500 dark:text-gray-500 text-[15px]">@<%= tweet.user.username %></span>
+          <span class="text-gray-600 text-[15px]">·</span>
+          <a href="<%= tweet_path(tweet) %>" class="text-gray-500 dark:text-gray-500 text-[15px] hover:underline">
+            <time datetime="<%= tweet.created_at.iso8601 %>">
+              <%= time_ago_in_words(tweet.created_at) %>
+            </time>
+          </a>
+
+          <% if (current_user rescue nil) == tweet.user %>
+            <div class="ml-auto flex items-center gap-1">
+              <%= link_to edit_tweet_path(tweet), class: "p-1 rounded-full hover:bg-sky-500/10 text-gray-600 hover:text-sky-400 transition-all duration-200" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+              <% end %>
+              <%= button_to tweet_path(tweet), method: :delete, class: "p-1 rounded-full hover:bg-red-500/10 text-gray-600 hover:text-red-400 transition-all duration-200", data: { turbo_confirm: "Bu tweet'i silmek istediğinizden emin misiniz?" } do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Tweet Text -->
+        <a href="<%= tweet_path(tweet) %>" class="block">
+          <p class="text-[15px] text-gray-900 dark:text-gray-100 leading-relaxed whitespace-pre-wrap break-words"><%= tweet.content %></p>
+        </a>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-between mt-3 max-w-[425px] -ml-2">
+          <!-- Comment Button -->
+          <a href="<%= tweet_path(tweet) %>" class="flex items-center gap-2 group">
+            <div class="p-2 rounded-full group-hover:bg-sky-500/10 transition-colors duration-200">
+              <svg class="w-[18px] h-[18px] text-gray-500 dark:text-gray-500 group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </svg>
+            </div>
+            <span id="comment_count_<%= tweet.id %>" class="text-[13px] text-gray-500 dark:text-gray-500 group-hover:text-sky-400 transition-colors">
+              <%= render "tweets/comment_count", tweet: tweet %>
+            </span>
+          </a>
+
+          <!-- Like Button -->
+          <div id="like_button_<%= tweet.id %>">
+            <%= render "likes/button", tweet: tweet %>
+          </div>
+
+          <!-- Share -->
+          <div class="flex items-center gap-2 group">
+            <div class="p-2 rounded-full group-hover:bg-emerald-500/10 transition-colors duration-200">
+              <svg class="w-[18px] h-[18px] text-gray-500 dark:text-gray-500 group-hover:text-emerald-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+<% end %>

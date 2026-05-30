@@ -1,0 +1,35 @@
+<!-- Comment Partial -->
+<div id="<%= dom_id(comment) %>" class="px-4 py-3 border-b border-gray-200 dark:border-gray-800/50 hover:bg-white/[0.02] transition-colors animate-fade-in">
+  <div class="flex gap-3">
+    <!-- Avatar -->
+    <a href="<%= user_path(comment.user) %>" class="flex-shrink-0">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-gray-900 dark:text-white font-bold text-xs hover:opacity-80 transition-opacity">
+        <%= comment.user.username[0..1].upcase %>
+      </div>
+    </a>
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-1 mb-0.5">
+        <a href="<%= user_path(comment.user) %>" class="hover:underline">
+          <span class="font-bold text-gray-900 dark:text-white text-sm"><%= comment.user.name_display %></span>
+        </a>
+        <span class="text-gray-500 dark:text-gray-500 text-sm">@<%= comment.user.username %></span>
+        <span class="text-gray-600 text-sm">·</span>
+        <span class="text-gray-500 dark:text-gray-500 text-sm"><%= time_ago_in_words(comment.created_at) %></span>
+
+        <% if (current_user rescue nil) == comment.user %>
+          <div class="ml-auto">
+            <%= button_to tweet_comment_path(comment.tweet, comment), method: :delete, class: "p-1 rounded-full hover:bg-red-500/10 text-gray-600 hover:text-red-400 transition-all duration-200" do %>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <p class="text-sm text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap break-words"><%= comment.content %></p>
+    </div>
+  </div>
+</div>

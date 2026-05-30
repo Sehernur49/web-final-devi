@@ -1,0 +1,95 @@
+<!-- User Profile Page -->
+<div class="sticky top-0 z-10 bg-white dark:bg-black/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800/50">
+  <div class="flex items-center gap-6 px-4 py-2">
+    <a href="<%= root_path %>" class="p-2 -ml-2 rounded-full hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors">
+      <svg class="w-5 h-5 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+    </a>
+    <div>
+      <h1 class="text-xl font-extrabold text-gray-900 dark:text-white"><%= @user.name_display %></h1>
+      <p class="text-xs text-gray-500 dark:text-gray-500"><%= @user.tweets_count %> tweet</p>
+    </div>
+  </div>
+</div>
+
+<!-- Cover / Banner -->
+<div class="h-48 bg-gradient-to-br from-sky-600 via-blue-700 to-indigo-800 relative">
+  <div class="absolute inset-0 bg-white dark:bg-black/20"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+</div>
+
+<!-- Profile Info -->
+<div class="px-4 pb-4 relative">
+  <!-- Avatar -->
+  <div class="absolute -top-16 left-4">
+    <div class="w-[134px] h-[134px] rounded-full border-4 border-white dark:border-black bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-gray-900 dark:text-white font-bold text-4xl shadow-2xl">
+      <%= @user.username[0..1].upcase %>
+    </div>
+  </div>
+
+  <!-- Follow Button -->
+  <div class="flex justify-end pt-3 mb-16">
+    <% if current_user != @user %>
+      <div id="follow_button_<%= @user.id %>">
+        <%= render "users/follow_button", user: @user %>
+      </div>
+    <% else %>
+      <a href="<%= edit_user_registration_path %>" class="border border-gray-600 text-gray-900 dark:text-white font-bold py-1.5 px-5 rounded-full hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-all duration-200 text-sm">
+        Profili Düzenle
+      </a>
+    <% end %>
+  </div>
+
+  <!-- Name & Username -->
+  <div class="mb-3">
+    <h2 class="text-xl font-extrabold text-gray-900 dark:text-white"><%= @user.name_display %></h2>
+    <p class="text-gray-500 dark:text-gray-500">@<%= @user.username %></p>
+  </div>
+
+  <!-- Bio -->
+  <% if @user.bio.present? %>
+    <p class="text-[15px] text-gray-800 dark:text-gray-200 leading-relaxed mb-3 whitespace-pre-wrap"><%= @user.bio %></p>
+  <% end %>
+
+  <!-- Join Date -->
+  <div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-500 text-sm mb-3">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+    </svg>
+    <span><%= @user.created_at.strftime("%B %Y") %> tarihinde katıldı</span>
+  </div>
+
+  <!-- Follow Stats -->
+  <div class="flex gap-5" id="followers_count_<%= @user.id %>">
+    <%= render "users/followers_count", user: @user %>
+  </div>
+</div>
+
+<!-- Tab bar -->
+<div class="flex border-b border-gray-200 dark:border-gray-800/50">
+  <button class="flex-1 py-3 text-center text-sm font-semibold text-gray-900 dark:text-white relative hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors">
+    Tweetler
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-1 bg-sky-500 rounded-full"></div>
+  </button>
+  <button class="flex-1 py-3 text-center text-sm font-semibold text-gray-500 dark:text-gray-500 hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors hover:text-gray-700 dark:text-gray-300">
+    Yanıtlar
+  </button>
+  <button class="flex-1 py-3 text-center text-sm font-semibold text-gray-500 dark:text-gray-500 hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors hover:text-gray-700 dark:text-gray-300">
+    Beğeniler
+  </button>
+</div>
+
+<!-- User's Tweets -->
+<div id="user-tweets">
+  <% @tweets.each do |tweet| %>
+    <%= render "tweets/tweet", tweet: tweet %>
+  <% end %>
+
+  <% if @tweets.empty? %>
+    <div class="py-16 text-center">
+      <h3 class="text-lg font-bold text-gray-600 dark:text-gray-400 mb-2">Henüz tweet yok</h3>
+      <p class="text-gray-600 text-sm">@<%= @user.username %> henüz tweet atmamış.</p>
+    </div>
+  <% end %>
+</div>

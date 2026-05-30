@@ -1,0 +1,59 @@
+<!-- Follow / Followers List Page -->
+<div class="sticky top-0 z-10 bg-white dark:bg-black/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800/50">
+  <div class="flex items-center gap-6 px-4 py-3">
+    <a href="<%= user_path(@user) %>" class="p-2 -ml-2 rounded-full hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors">
+      <svg class="w-5 h-5 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+    </a>
+    <div>
+      <h1 class="text-xl font-extrabold text-gray-900 dark:text-white"><%= @user.name_display %></h1>
+      <p class="text-xs text-gray-500 dark:text-gray-500">@<%= @user.username %></p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex border-b border-gray-200 dark:border-gray-800/50">
+    <a href="<%= followers_user_path(@user) %>" class="flex-1 py-3 text-center text-sm font-semibold <%= action_name == 'followers' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-500' %> hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors relative">
+      Takipçiler
+      <% if action_name == 'followers' %>
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-1 bg-sky-500 rounded-full"></div>
+      <% end %>
+    </a>
+    <a href="<%= following_user_path(@user) %>" class="flex-1 py-3 text-center text-sm font-semibold <%= action_name == 'following' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-500' %> hover:bg-black/5 dark:hover:bg-black/5 dark:bg-white/5 transition-colors relative">
+      Takip Edilenler
+      <% if action_name == 'following' %>
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-1 bg-sky-500 rounded-full"></div>
+      <% end %>
+    </a>
+  </div>
+</div>
+
+<div>
+  <% @users.each do |user| %>
+    <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-200 dark:border-gray-800/50 hover:bg-white/[0.02] transition-colors">
+      <a href="<%= user_path(user) %>">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-gray-900 dark:text-white font-bold text-sm flex-shrink-0">
+          <%= user.username[0..1].upcase %>
+        </div>
+      </a>
+      <div class="flex-1 min-w-0">
+        <a href="<%= user_path(user) %>" class="hover:underline">
+          <p class="font-bold text-gray-900 dark:text-white text-[15px]"><%= user.name_display %></p>
+        </a>
+        <p class="text-gray-500 dark:text-gray-500 text-sm">@<%= user.username %></p>
+      </div>
+      <% if user != current_user %>
+        <div id="follow_button_<%= user.id %>">
+          <%= render "users/follow_button", user: user %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @users.empty? %>
+    <div class="py-16 text-center">
+      <p class="text-gray-600 text-sm">Henüz kimse yok.</p>
+    </div>
+  <% end %>
+</div>

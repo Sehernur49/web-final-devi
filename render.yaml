@@ -1,0 +1,22 @@
+databases:
+  - name: twitter_clone_db
+    databaseName: twitter_clone
+    user: twitter_clone_user
+    plan: free
+
+services:
+  - type: web
+    name: twitter-clone
+    plan: free
+    runtime: ruby
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: twitter_clone_db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: RAILS_SERVE_STATIC_FILES
+        value: true

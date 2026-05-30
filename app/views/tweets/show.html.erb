@@ -1,0 +1,97 @@
+<!-- Tweet Detail Page -->
+<div class="sticky top-0 z-10 bg-white dark:bg-black/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800/50">
+  <div class="flex items-center gap-6 px-4 py-3">
+    <a href="<%= root_path %>" class="p-2 -ml-2 rounded-full hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors">
+      <svg class="w-5 h-5 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+    </a>
+    <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Tweet</h1>
+  </div>
+</div>
+
+<!-- Tweet Content -->
+<article class="px-4 py-4 border-b border-gray-200 dark:border-gray-800/50">
+  <div class="flex items-start gap-3 mb-4">
+    <a href="<%= user_path(@tweet.user) %>">
+      <div class="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-gray-900 dark:text-white font-bold text-sm flex-shrink-0 hover:opacity-80 transition-opacity">
+        <%= @tweet.user.username[0..1].upcase %>
+      </div>
+    </a>
+    <div>
+      <a href="<%= user_path(@tweet.user) %>" class="hover:underline">
+        <span class="font-bold text-gray-900 dark:text-white"><%= @tweet.user.name_display %></span>
+      </a>
+      <p class="text-gray-500 dark:text-gray-500 text-sm">@<%= @tweet.user.username %></p>
+    </div>
+  </div>
+
+  <p class="text-xl text-gray-900 dark:text-white leading-relaxed mb-4"><%= @tweet.content %></p>
+
+  <div class="flex items-center gap-2 text-gray-500 dark:text-gray-500 text-sm py-3 border-t border-gray-200 dark:border-gray-800/50">
+    <time><%= @tweet.created_at.strftime("%H:%M") %></time>
+    <span>·</span>
+    <time><%= @tweet.created_at.strftime("%d %b %Y") %></time>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="flex gap-6 py-3 border-t border-gray-200 dark:border-gray-800/50 text-sm">
+    <div>
+      <span id="comment_count_<%= @tweet.id %>" class="font-bold text-gray-900 dark:text-white"><%= @tweet.comments_count %></span>
+      <span class="text-gray-500 dark:text-gray-500"> Yorum</span>
+    </div>
+    <div>
+      <span class="font-bold text-gray-900 dark:text-white"><%= @tweet.likes_count %></span>
+      <span class="text-gray-500 dark:text-gray-500"> Beğeni</span>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex items-center justify-around py-2 border-t border-gray-200 dark:border-gray-800/50">
+    <!-- Comment -->
+    <button class="p-2 rounded-full hover:bg-sky-500/10 text-gray-500 dark:text-gray-500 hover:text-sky-400 transition-all duration-200 group">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+      </svg>
+    </button>
+
+    <!-- Like -->
+    <div id="like_button_<%= @tweet.id %>">
+      <%= render "likes/button", tweet: @tweet %>
+    </div>
+
+    <% if @tweet.user == current_user %>
+      <!-- Delete -->
+      <%= button_to tweet_path(@tweet), method: :delete, class: "p-2 rounded-full hover:bg-red-500/10 text-gray-500 dark:text-gray-500 hover:text-red-400 transition-all duration-200", data: { turbo_confirm: "Bu tweet'i silmek istediğinizden emin misiniz?" } do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      <% end %>
+    <% end %>
+  </div>
+</article>
+
+<!-- Comment Form -->
+<div class="px-4 py-3 border-b border-gray-200 dark:border-gray-800/50">
+  <div class="flex gap-3">
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-gray-900 dark:text-white font-bold text-xs flex-shrink-0">
+      <%= current_user.username[0..1].upcase %>
+    </div>
+    <div class="flex-1" id="comment_form_<%= @tweet.id %>">
+      <%= render "comments/form", tweet: @tweet, comment: @comment %>
+    </div>
+  </div>
+</div>
+
+<!-- Comments List -->
+<div id="comments_<%= @tweet.id %>">
+  <% @comments.each do |comment| %>
+    <%= render "comments/comment", comment: comment %>
+  <% end %>
+
+  <% if @comments.empty? %>
+    <div class="py-12 text-center">
+      <p class="text-gray-600 text-sm">Henüz yorum yok. İlk yorumu sen yap!</p>
+    </div>
+  <% end %>
+</div>

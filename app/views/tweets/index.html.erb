@@ -1,0 +1,55 @@
+<!-- Tweets Index / Home Feed -->
+<div class="sticky top-0 z-10 bg-white dark:bg-black/80 backdrop-blur-lg border-b border-gray-200 dark:border-[#2f3336]">
+  <h1 class="text-xl font-extrabold text-gray-900 dark:text-white px-4 py-3">Ana Sayfa</h1>
+</div>
+
+<!-- Tweet Compose Area -->
+<div id="tweet-form-area" class="border-b border-gray-200 dark:border-[#2f3336] px-4 py-4">
+  <div class="flex gap-3">
+    <!-- Current User Avatar -->
+    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-gray-900 dark:text-white font-bold text-sm flex-shrink-0 mt-1">
+      <%= current_user.username[0..1].upcase %>
+    </div>
+    <!-- Tweet Form -->
+    <div class="flex-1" id="tweet_form">
+      <%= render "tweets/form", tweet: @tweet %>
+    </div>
+  </div>
+</div>
+
+<!-- Tab bar -->
+<div class="flex border-b border-gray-200 dark:border-[#2f3336]">
+  <%= link_to root_path(filter: "all"), class: "flex-1 py-3 text-center text-sm font-semibold #{ @filter == "all" ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" } relative hover:bg-black/5 dark:hover:bg-white/5 transition-colors" do %>
+    Sana Özel
+    <% if @filter == "all" %>
+      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-1 bg-sky-500 rounded-full"></div>
+    <% end %>
+  <% end %>
+  
+  <%= link_to root_path(filter: "following"), class: "flex-1 py-3 text-center text-sm font-semibold #{ @filter == "following" ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" } relative hover:bg-black/5 dark:hover:bg-white/5 transition-colors" do %>
+    Takip Edilenler
+    <% if @filter == "following" %>
+      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-1 bg-sky-500 rounded-full"></div>
+    <% end %>
+  <% end %>
+</div>
+
+<!-- Tweet Feed -->
+<div id="tweets">
+  <%= turbo_stream_from "tweets" %>
+  <% @tweets.each do |tweet| %>
+    <%= render "tweets/tweet", tweet: tweet %>
+  <% end %>
+
+  <% if @tweets.empty? %>
+    <div class="py-16 text-center">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-900 flex items-center justify-center">
+        <svg class="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-gray-600 dark:text-gray-400 mb-2">Henüz tweet yok</h3>
+      <p class="text-gray-600 text-sm">İlk tweet'ini at ya da birilerini takip et!</p>
+    </div>
+  <% end %>
+</div>
